@@ -1,0 +1,7 @@
+{"level":"info","message":"Express 서버가 http://localhost:3000 에서 실행 중입니다.","timestamp":"2025-07-03 15:23:26"}
+{"level":"info","message":"GET / 요청이 들어왔습니다.","timestamp":"2025-07-03 15:23:39"}
+{"level":"info","message":"GET /upload 요청이 들어왔습니다.","timestamp":"2025-07-03 15:24:38"}
+{"level":"info","message":"POST /upload 요청이 들어왔습니다.","timestamp":"2025-07-03 15:24:44"}
+{"0":{"destination":"uploads","encoding":"7bit","fieldname":"myFile","filename":"1751523884773_sample.png","mimetype":"image/png","originalname":"sample.png","path":"uploads\\1751523884773_sample.png","size":13817},"level":"info","message":"업로드된 파일 정보:","timestamp":"2025-07-03 15:24:44"}
+{"level":"info","message":"요청 바디 정보:","myName":"hong","timestamp":"2025-07-03 15:24:44"}
+{"level":"info","message":"파일 업로드 완료.","timestamp":"2025-07-03 15:24:44"}

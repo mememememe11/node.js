@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h3>파일업로드</h3>
+    <form action="upload" method="post" enctype="multipart/form-data">
+      <table>
+        <tr>
+          <td>이름:</td>
+          <td><input type="text" name="myName" /></td>
+        </tr>
+        <tr>
+          <td>파일:</td>
+          <td><input type="file" accept="image/*" multiple name="myFile" /></td>
+        </tr>
+        <tr>
+          <td colspan="2" align="center">
+            <input type="submit" value="업로드" />
+          </td>
+        </tr>
+      </table>
+    </form>
+
+    <button id="btn">클릭.</button>
+    <script>
+      document.querySelector("#btn").addEventListener("click", function (e) {
+        fetch("http://localhost:3000/getCors") // http://localhost:3000/getCors
+          .then((resolve) => resolve.json())
+          .then((result) => console.log(result))
+          .catch((err) => console.log(err));
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <form action="">
+      <input type="file" name="base64" />
+      <button type="button">Upload</button>
+    </form>
+
+    <script>
+      let data = ""; //이따가 promise 동기방식으로 작업
+      // 파일선택
+      document
+        .querySelector('input[name="base64"]')
+        .addEventListener("change", (e) => {
+          //base64인 인풋태그선택
+          console.dir(e.target.files[0]); //웹페이지 f12에 file정보 첫번째값?
+          let file = e.target.files[0];
+          let fr = new FileReader();
+          fr.onload = function (evt) {
+            console.log(evt.target.result); // axios 라이브러리를 이용해서 전달할 값
+            data = evt.target.result;
+          };
+          fr.readAsDataURL(file); //readasDataurl메소드가 호출되면 onload 이벤트발생? 이벤트대상 보기 위해 console.log(evt.target)
+        });
+
+      //저장
+      document
+        .querySelector("button[type=button]")
+        .addEventListener("click", (e) => {
+          axios({
+            method: "post",
+            url: "/upload",
+            data: { data: data },
+          });
+        });
+    </script>
+  </body>
+</html>

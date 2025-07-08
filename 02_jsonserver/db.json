@@ -1,0 +1,19 @@
+{
+  "posts": [
+    {
+      "id": "2",
+      "title": "2번수정",
+      "author": "two"
+    },
+    {
+      "id": "9",
+      "title": "fetch연습",
+      "author": "admin"
+    },
+    {
+      "id": "5",
+      "title": "fetch5연습",
+      "author": "admin"
+    }
+  ]
+}
