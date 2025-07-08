@@ -9,7 +9,17 @@ const { query } = require("./mysql/index.js");
 
 const app = express(); // 인스턴스 생성
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: "10mb" }));
+
+// 0708 업로드 경로 확인
+const uploadDir = path.join(__dirname, "uploads");
+if (!fs.existsSync(uploadDir)) {
+  // D: //dev/git..../05_project/uploads
+  fs.mkdirSync(uploadDir);
+}
+
+//이거 안쓰는디
+//app.use(express.json({ limit: "10mb"}));
 
 // body - parser
 //app.use(express.json()); // 여기도 같이써야함
@@ -30,7 +40,6 @@ app.get("/fileupload", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html")); // const path = require("path");맨위 써야함
 });
 
-// 다운로드
 app.get("/download/:productId/:fileName", (req, res) => {
   //params는 productId 말하는것
   const { productId, fileName } = req.params;
@@ -48,19 +57,32 @@ app.get("/download/:productId/:fileName", (req, res) => {
   res.send("다운로드 완료");
 });
 
-// 0708 업로드 //업로드는 페이지만듬(폴더)
-app.post("/upload:filename", (req, res) => {
-  const { fileName } = req.params; // {filename: 'sample.jpg', product: 3} // params를 열어보면 이렇게 적혀있음
-  const filepath = `${__dirname}/uploads/${filename}`; // d드라이브 - 05_project - uploads - sample.jpg
-  let data = req.body.data.slice(req.body.data.lastIndexOf(";base64,") + 8); //axios넘겨줄때 data 속성으로 넘기는걸 받는다
-  // 전체값에서 base64부터 짤라냄 그걸 let "data" 에 담음
-  fs.writeFile(filepath, data, "base64", (err) => {
-    if (err) {
-      res.send("error");
-    } else {
-      res.send("success");
-    }
-  });
+// 0708 업로드 //업로드는 페이지만듬(폴더) // "/upload/:filename" << uploads 2/3 밑에 hong.png있음
+app.post("/upload/:filename/:pid", (req, res) => {
+  const { filename, pid } = req.params; // {filename: 'sample.jpg', product: 3} // params를 열어보면 이렇게 적혀있음
+  //const filepath = path{__dirname}/uploads/${safeFilename}`; // d드라이브 - 05_project - uploads - sample.jpg
+  let productDir = path.join(uploadDir, pid);
+  if (!fs.existsSync(productDir)) {
+    fs.mkdirSync(productDir);
+  }
+
+  const safeFilename = path.basename(filename); //경로공격
+  const filePath = path.join(uploadDir, pid, safeFilename);
+  try {
+    let base64data = req.body.data;
+    let data = req.body.data.slice(req.body.data.lastIndexOf(";base64,") + 8); //axios넘겨줄때 data 속성으로 넘기는걸 받는다
+    // 전체값에서 base64부터 짤라냄 그걸 let "data" 에 담음
+    fs.writeFile(filepath, data, "base64", (err) => {
+      if (err) {
+        res.send("error");
+      } else {
+        res.send("success");
+      }
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(400).send("invalid data");
+  }
 });
 
 // 데이터 쿼리

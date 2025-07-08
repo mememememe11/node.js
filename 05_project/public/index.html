@@ -13,31 +13,34 @@
     </form>
 
     <script>
-      let data = ""; //이따가 promise 동기방식으로 작업
+      let data = ""; // base64 인코딩 데이터 // 이따가 promise 동기방식으로 작업
+      let fn; // 파일명
       // 파일선택
       document
         .querySelector('input[name="base64"]')
         .addEventListener("change", (e) => {
           //base64인 인풋태그선택
-          console.dir(e.target.files[0]); //웹페이지 f12에 file정보 첫번째값?
-          let file = e.target.files[0];
+          //console.dir(e.target.files[0]); //웹페이지 f12에 file정보 첫번째값?
+          let file = e.target.files[0]; // name 속성 // file속성을 가지고있음
+          fn = file.name;
           let fr = new FileReader();
           fr.onload = function (evt) {
-            console.log(evt.target.result); // axios 라이브러리를 이용해서 전달할 값
+            console.log(evt.target); // axios 라이브러리를 이용해서 전달할 값
             data = evt.target.result;
           };
           fr.readAsDataURL(file); //readasDataurl메소드가 호출되면 onload 이벤트발생? 이벤트대상 보기 위해 console.log(evt.target)
         });
 
-      //저장
+      //저장 //버튼 클릭시 함수실행
       document
-        .querySelector("button[type=button]")
-        .addEventListener("click", (e) => {
-          axios({
+        .querySelector('button[type="button"]')
+        .addEventListener("click", async (e) => {
+          let result = await axios({
             method: "post",
-            url: "/upload",
-            data: { data: data },
+            url: "/upload/" + fn,
+            data: { data }, //data라는 이름으로 정함 axios 홈페이지참조
           });
+          console.log(result);
         });
     </script>
   </body>
