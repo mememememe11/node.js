@@ -3,6 +3,7 @@ const mysql = require("mysql2");
 require("dotenv").config({ path: "./mysql/.env" });
 const fs = require("fs");
 const path = require("path");
+const cors = require("cors");
 
 const bodyParser = require("body-parser"); // express app.post 사용시 포스트맨/ 지금 이 줄 코드도 같이사용
 const { query } = require("./mysql/index.js");
@@ -10,6 +11,8 @@ const { query } = require("./mysql/index.js");
 const app = express(); // 인스턴스 생성
 
 app.use(bodyParser.json({ limit: "10mb" }));
+// 0709
+app.use(cors());
 
 // 0708 업로드 경로 확인
 const uploadDir = path.join(__dirname, "uploads");
@@ -102,4 +105,22 @@ app.post("/api/:alias", async (req, res) => {
     req.body.where
   );
   res.send(result);
+});
+
+// 0709 node
+app.get("/todoList", async (req, res) => {
+  const result = await query("todoList");
+  console.log(result);
+  res.json(result);
+});
+
+// todo 삭제
+app.delete("/todo/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await query("todoDelete", req.params.id);
+    res.json(result);
+  } catch (err) {
+    res.json(err);
+  }
 });
