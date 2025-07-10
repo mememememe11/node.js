@@ -12,7 +12,7 @@ const app = express(); // 인스턴스 생성
 
 app.use(bodyParser.json({ limit: "10mb" }));
 // 0709
-app.use(cors());
+app.use(cors()); // CORS 처리
 
 // 0708 업로드 경로 확인
 const uploadDir = path.join(__dirname, "uploads");
