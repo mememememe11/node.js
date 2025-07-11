@@ -10,6 +10,8 @@ const { query } = require("./mysql/index.js");
 
 const app = express(); // 인스턴스 생성
 
+app.use("/download", express.static(path.join(__dirname, "uploads")));
+
 app.use(bodyParser.json({ limit: "10mb" }));
 // 0709
 app.use(cors()); // CORS 처리
@@ -43,6 +45,7 @@ app.get("/fileupload", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html")); // const path = require("path");맨위 써야함
 });
 
+// 다운로드
 app.get("/download/:productId/:fileName", (req, res) => {
   //params는 productId 말하는것
   const { productId, fileName } = req.params;
@@ -61,8 +64,8 @@ app.get("/download/:productId/:fileName", (req, res) => {
 });
 
 // 0708 업로드 //업로드는 페이지만듬(폴더) // "/upload/:filename" << uploads 2/3 밑에 hong.png있음
-app.post("/upload/:filename/:pid", (req, res) => {
-  const { filename, pid } = req.params; // {filename: 'sample.jpg', product: 3} // params를 열어보면 이렇게 적혀있음
+app.post("/upload/:filename/:pid/:type", (req, res) => {
+  const { filename, pid, type } = req.params; // {filename: 'sample.jpg', product: 3} // params를 열어보면 이렇게 적혀있음
   //const filepath = path{__dirname}/uploads/${safeFilename}`; // d드라이브 - 05_project - uploads - sample.jpg
   let productDir = path.join(uploadDir, pid);
   if (!fs.existsSync(productDir)) {
@@ -75,7 +78,11 @@ app.post("/upload/:filename/:pid", (req, res) => {
     let base64data = req.body.data;
     let data = req.body.data.slice(req.body.data.lastIndexOf(";base64,") + 8); //axios넘겨줄때 data 속성으로 넘기는걸 받는다
     // 전체값에서 base64부터 짤라냄 그걸 let "data" 에 담음
-    fs.writeFile(filepath, data, "base64", (err) => {
+    fs.writeFile(filepath, data, "base64", async (err) => {
+      // pid, type, fileName => db insert
+      query("productImageInsert", [
+        { product_id: pid, type: type, path: filename },
+      ]);
       if (err) {
         res.send("error");
       } else {
@@ -99,11 +106,7 @@ app.post("/api/:alias", async (req, res) => {
   console.log(req.body);
   //   console.log(req.body.where);
 
-  const result = await query(
-    req.params.alias,
-    req.body.param.id,
-    req.body.where
-  );
+  const result = await query(req.params.alias, req.body.param, req.body.where);
   res.send(result);
 });
 
